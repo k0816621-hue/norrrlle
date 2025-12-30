@@ -43,27 +43,114 @@ local MainSection = MainTab:CreateSection("hbe")
 local Button = MainTab:CreateButton({
    Name = "HitBox",
    Callback = function()
-        -- ReplicatedStorage/HitboxModule
+local function SetupHitbox(player, character)
+	if ActiveHitboxConnections[player.UserId] then ActiveHitboxConnections[player.UserId]:Disconnect() end
+	ActiveHitboxConnections[player.UserId] = nil
 
-local HitboxModule = {}
+	local rootPart = character:WaitForChild("HumanoidRootPart", 5)
+	if not rootPart then return end
 
--- Default hitbox size
-HitboxModule.CurrentSize = Vector3.new(2, 2, 1)
+	local hitboxVisual = character:FindFirstChild("EnlargedHitboxVisual")
+	if not hitboxVisual then
+		hitboxVisual = Instance.new("Part")
+		hitboxVisual.Name = "EnlargedHitboxVisual"
+		hitboxVisual.Shape = CONFIG.PartShape
+		hitboxVisual.Material = CONFIG.Material
+		hitboxVisual.Color = CONFIG.Color
+		hitboxVisual.Transparency = CurrentTransparency
+		hitboxVisual.Anchored = true
+		hitboxVisual.Massless = true
+		hitboxVisual.CanCollide = false
+		hitboxVisual.CanTouch = false
+		hitboxVisual.CanQuery = true
+		hitboxVisual.CastShadow = false
+		hitboxVisual.Size = Vector3.new(4,4,4)
+		hitboxVisual.CFrame = rootPart.CFrame
+		hitboxVisual.Parent = character
+	end
 
-function HitboxModule:SetHitboxSize(character, size)
- if not character then return end
+	local smoothedCF, smoothedSize = hitboxVisual.CFrame, hitboxVisual.Size
+	local con
+	con = RunService.RenderStepped:Connect(function(dt)
+		if not rootPart.Parent or not hitboxVisual or not hitboxVisual.Parent then
+			if con then con:Disconnect() end
+			ActiveHitboxConnections[player.UserId] = nil
+			if hitboxVisual then hitboxVisual:Destroy() end
+			return
+		end
+		local s = rootPart.Size
+		local baseDiameter = math.max(s.X, s.Y, s.Z)
+		local targetDiameter = math.max(0.05, baseDiameter * CurrentScale)
+		local targetSize = Vector3.new(targetDiameter, targetDiameter, targetDiameter)
+		local targetCF = rootPart.CFrame
 
- local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
- if not humanoidRootPart then return end
+		local posT = math.clamp(dt * CONFIG.PositionLerpSpeed, 0, 1)
+		local sizeT = math.clamp(dt * CONFIG.SizeLerpSpeed, 0, 1)
 
- humanoidRootPart.Size = size
- humanoidRootPart.Transparency = 0.5
- humanoidRootPart.Material = Enum.Material.ForceField
- humanoidRootPart.CanCollide = false
+		smoothedCF = CF_Lerp(smoothedCF, targetCF, posT)
+		smoothedSize = V3Lerp(smoothedSize, targetSize, sizeT)
 
- self.CurrentSize = size
+		hitboxVisual.CFrame = smoothedCF
+		hitboxVisual.Size = smoothedSize
+		hitboxVisual.Transparency = CurrentTransparency
+		hitboxVisual.Color = CONFIG.Color
+
+		local nl = NameLabels[player.UserId]
+		if nl then nl.TextColor3 = currentESPColor() end
+	end)
+	ActiveHitboxConnections[player.UserId] = con
+	Initialized[player.UserId] = true
 end
 
-return HitboxModule
+_G.__SetupHitbox = SetupHitbox
+
+local function HandlePlayer(p)
+	if p == LocalPlayer then return end
+	setupPlayerTag(p)
+	local function onChar(char)
+		Initialized[p.UserId] = false
+		local hrp = char:FindFirstChild("HumanoidRootPart") or char:WaitForChild("HumanoidRootPart", 3)
+		if hrp then
+			SetupHitbox(p, char)
+		else
+			task.delay(0.5, function() if p.Character and p.Character:FindFirstChild("HumanoidRootPart") then SetupHitbox(p, p.Character) end end)
+		end
+		if ESPEnabled then createNameTag(p) else destroyNameTag(p) end
+	end
+	p.CharacterAdded:Connect(onChar)
+	if p.Character then onChar(p.Character) end
+end
+
+local function CleanupPlayer(p) destroyForPlayer(p) end
+
+for _, p in ipairs(Players:GetPlayers()) do HandlePlayer(p) end
+Players.PlayerAdded:Connect(HandlePlayer)
+Players.PlayerRemoving:Connect(CleanupPlayer)
+
+local function RunWatchdog()
+	for _, p in ipairs(Players:GetPlayers()) do
+		if p ~= LocalPlayer then
+			local need = (not Initialized[p.UserId]) or (not ActiveHitboxConnections[p.UserId])
+			if need and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then SetupHitbox(p, p.Character) end
+			if ESPEnabled and p.Character then
+				local head = p.Character:FindFirstChild("Head")
+				if head and not head:FindFirstChild("PlayerNameTag") then createNameTag(p) end
+			end
+		end
+	end
+end
+
+task.spawn(function()
+	while true do
+		task.wait(CONFIG.WatchdogInterval)
+		pcall(RunWatchdog)
+	end
+end)
+
+game:BindToClose(function()
+	for _, conn in pairs(ActiveHitboxConnections) do if typeof(conn) == "RBXScriptConnection" then conn:Disconnect() end end
+	table.clear(ActiveHitboxConnections); table.clear(Initialized)
+	for _, p in ipairs(Players:GetPlayers()) do destroyForPlayer(p) end
+end)
    end,
 })
