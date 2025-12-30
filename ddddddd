@@ -2,7 +2,7 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
    Name = "Norlape and Fate are tvl's enders 👑 script",
-   Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
+   Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).p
    LoadingTitle = "queen is loading((((",
    LoadingSubtitle = "by enders of tvl...",
    ShowText = "Rayfield", -- for mobile users to unhide rayfield, change if you'd like
