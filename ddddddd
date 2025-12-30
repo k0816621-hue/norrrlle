@@ -1,11 +1,11 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "norlape and fate are enders script",
+   Name = "Norlape and Fate are tvl's enders 👑 script",
    Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
-   LoadingTitle = "queen is loading",
-   LoadingSubtitle = "by enders of tvl...",
-   ShowText = "queenie", -- for mobile users to unhide rayfield, change if you'd like
+   LoadingTitle = "queen is loading((((",
+   LoadingSubtitle = "by enders fo tvl...",
+   ShowText = "Rayfield", -- for mobile users to unhide rayfield, change if you'd like
    Theme = "Bloom", -- Check https://docs.sirius.menu/rayfield/configuration/themes
 
    ToggleUIKeybind = "K", -- The keybind to toggle the UI visibility (string like "K" or Enum.KeyCode)
@@ -31,18 +31,39 @@ local Window = Rayfield:CreateWindow({
       Subtitle = "Key System",
       Note = "No method of obtaining the key is provided", -- Use this to tell the user how to get a key
       FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
-      SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+      SaveKey = false, -- The user's key will be saved, but if you change the key, they will be unable to use your script
       GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
       Key = {"nigga"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
    }
 })
 
-local MainTab = Window:CreateTab("clock", nil) -- Title, Image
+local MainTab = Window:CreateTab("Clock💅", nil) -- Title, Image
 local MainSection = MainTab:CreateSection("hbe")
 
 local Button = MainTab:CreateButton({
    Name = "HitBox",
    Callback = function()
-   -- The function that takes place when the button is pressed
+        -- ReplicatedStorage/HitboxModule
+
+local HitboxModule = {}
+
+-- Default hitbox size
+HitboxModule.CurrentSize = Vector3.new(2, 2, 1)
+
+function HitboxModule:SetHitboxSize(character, size)
+ if not character then return end
+
+ local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+ if not humanoidRootPart then return end
+
+ humanoidRootPart.Size = size
+ humanoidRootPart.Transparency = 0.5
+ humanoidRootPart.Material = Enum.Material.ForceField
+ humanoidRootPart.CanCollide = false
+
+ self.CurrentSize = size
+end
+
+return HitboxModule
    end,
 })
