@@ -48,6 +48,6 @@ local Toggle = MainTab:CreateToggle({
 getgenv().HBE_ENABLED = Value
 
  if Value then
-  loadstring(game:HttpGet("https://raw.githubusercontent.com/k0816621-hue/hbe/refs/heads/main/iss", true))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/k0816621-hue/hbe/refs/heads/main/iss", true))()
    end,
 })
