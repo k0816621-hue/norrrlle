@@ -43,57 +43,6 @@ local MainSection = MainTab:CreateSection("hbe")
 local Button = MainTab:CreateButton({
    Name = "HitBox",
    Callback = function()
--- Hitbox Toggle Script (ONE SCRIPT)
-
-local Players = game:GetService("Players")
-
-local player = Players.LocalPlayer
-local button = script.Parent
-
-local enabled = false
-local HITBOX_SIZE = Vector3.new(8, 8, 8)
-local DEFAULT_SIZE = Vector3.new(2, 2, 1)
-
-local function applyHitbox(character)
- local hrp = character:FindFirstChild("HumanoidRootPart")
- if not hrp then return end
-
- hrp.Size = HITBOX_SIZE
- hrp.Transparency = 0.5
- hrp.Material = Enum.Material.ForceField
- hrp.CanCollide = false
-end
-
-local function resetHitbox(character)
- local hrp = character:FindFirstChild("HumanoidRootPart")
- if not hrp then return end
-
- hrp.Size = DEFAULT_SIZE
- hrp.Transparency = 1
- hrp.Material = Enum.Material.Plastic
-end
-
-local function toggle()
- local character = player.Character or player.CharacterAdded:Wait()
- enabled = not enabled
-
- if enabled then
-  applyHitbox(character)
-  button.Text = "Hitboxes: ON"
- else
-  resetHitbox(character)
-  button.Text = "Hitboxes: OFF"
- end
-end
-
-button.MouseButton1Click:Connect(toggle)
-
--- Reapply after respawn
-player.CharacterAdded:Connect(function(character)
- if enabled then
-  task.wait(0.2)
-  applyHitbox(character)
- end
-end)
+https://raw.githubusercontent.com/k0816621-hue/hbe/refs/heads/main/iss
    end,
 })
