@@ -4,8 +4,8 @@ local Window = Rayfield:CreateWindow({
    Name = "norlape and fate are enders script",
    Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
    LoadingTitle = "queen is loading",
-   LoadingSubtitle = "by enders fo tvl...",
-   ShowText = "Rayfield", -- for mobile users to unhide rayfield, change if you'd like
+   LoadingSubtitle = "by enders of tvl...",
+   ShowText = "queenie", -- for mobile users to unhide rayfield, change if you'd like
    Theme = "Bloom", -- Check https://docs.sirius.menu/rayfield/configuration/themes
 
    ToggleUIKeybind = "k", -- The keybind to toggle the UI visibility (string like "K" or Enum.KeyCode)
