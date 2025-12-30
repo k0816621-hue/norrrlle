@@ -40,9 +40,3 @@ local Window = Rayfield:CreateWindow({
 local MainTab = Window:CreateTab("Clock💅", nil) -- Title, Image
 local MainSection = MainTab:CreateSection("hbe")
 
-local Button = MainTab:CreateButton({
-   Name = "HitBox",
-   Callback = function()
-      "https://raw.githubusercontent.com/k0816621-hue/hbe/refs/heads/main/iss"
-   end,
-})
