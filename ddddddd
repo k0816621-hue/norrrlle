@@ -56,20 +56,58 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/k0816621-hue/hbe/refs
 })
 
 local Toggle = MainTab:CreateToggle({
-   Name = "ESP",
-   CurrentValue = false,
-   Flag = "Toggle2", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-   Callback = function(Value)
-if Value then
-            -- Load the ESP script dynamically
-            if not _G.ESPLoaded then
-                _G.ESPLoaded = true
-loadstring(game:HttpGet("https://raw.githubusercontent.com/k0816621-hue/espspp/refs/heads/main/esppink", true))()
-            -- Enable ESP
-            _G.ESPEnabled = true
-        else
-            -- Disable ESP
-            _G.ESPEnabled = false
+    Name = "Pink ESP",
+    CurrentValue = false,
+    Flag = "Toggle2",
+    Callback = function(Value)
+        _G.ESPEnabled = Value
+        -- Only load the ESP script once
+        if not _G.ESPLoaded then
+            _G.ESPLoaded = true
+            spawn(function()
+                local Players = game:GetService("Players")
+                local RunService = game:GetService("RunService")
+                local ESPBoxes = {}
+
+                local function CreateESP(player)
+                    local box = Instance.new("BoxHandleAdornment")
+                    box.Adornee = player.Character:FindFirstChild("HumanoidRootPart")
+                    box.Size = Vector3.new(2, 5, 1)
+                    box.Color3 = Color3.fromRGB(255, 105, 180)
+                    box.Transparency = 0.5
+                    box.AlwaysOnTop = true
+                    box.ZIndex = 10
+                    box.Parent = workspace
+                    return box
+                end
+
+                RunService.RenderStepped:Connect(function()
+                    for _, player in pairs(Players:GetPlayers()) do
+                        if player ~= Players.LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                            if _G.ESPEnabled then
+                                if not ESPBoxes[player] then
+                                    ESPBoxes[player] = CreateESP(player)
+                                else
+                                    ESPBoxes[player].Adornee = player.Character.HumanoidRootPart
+                                end
+                            else
+                                if ESPBoxes[player] then
+                                    ESPBoxes[player]:Destroy()
+                                    ESPBoxes[player] = nil
+                                end
+                            end
+                        end
+                    end
+                end)
+
+                -- Clean up ESP when players leave
+                Players.PlayerRemoving:Connect(function(player)
+                    if ESPBoxes[player] then
+                        ESPBoxes[player]:Destroy()
+                        ESPBoxes[player] = nil
+                    end
+                end)
+            end)
         end
-   end,
+    end,
 })
