@@ -43,6 +43,6 @@ local MainSection = MainTab:CreateSection("hbe")
 local Button = MainTab:CreateButton({
    Name = "HitBox",
    Callback = function()
-      https://raw.githubusercontent.com/k0816621-hue/hbe/refs/heads/main/iss
+      "https://raw.githubusercontent.com/k0816621-hue/hbe/refs/heads/main/iss"
    end,
 })
